@@ -1,0 +1,536 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+           xmlns:five="http://namespaces.zope.org/five"
+           i18n_domain="agsci.UniversalExtender"
+           xmlns:monkey="http://namespaces.plone.org/monkey"
+           xmlns:i18n="http://namespaces.zope.org/i18n">
+
+    <i18n:registerTranslations directory="locales" />
+
+    <include package="archetypes.schemaextender" />
+    <include package="collective.monkeypatcher" />
+        
+    <genericsetup:registerProfile
+        name="default"
+        title="UniversalExtender"
+        directory="profiles/default"
+        description="A universal extender for the AgSci sites, including field and GUI tweaks"
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+   <genericsetup:registerProfile
+      name="uninstall"
+      title="UniversalExtender Uninstall Profile"
+      directory="profiles/uninstall"
+      description="Removes UniversalExtender."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      />
+
+    <!-- Additional fields for HomePage -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.HomePageExtender"
+        factory=".extender.HomePageExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    /> 
+
+    <!-- FSD Person changes -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.FSDPersonExtender"
+        factory=".extender.FSDPersonExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    /> 
+
+    <adapter
+        name="agsci.UniversalExtender.extender.FSDPersonExtender.fiddle"
+        factory=".extender.FSDPersonExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+    /> 
+
+    <!-- Link and File defaults -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.DefaultExcludeFromNav"
+        factory=".extender.DefaultExcludeFromNav"
+        provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+    />
+    
+    <five:implements
+        class="Products.ATContentTypes.content.link.ATLink"
+        interface=".interfaces.IDefaultExcludeFromNav"
+    /> 
+
+    <five:implements
+        class="Products.ATContentTypes.content.file.ATFile"
+        interface=".interfaces.IDefaultExcludeFromNav"
+    /> 
+
+    <five:implements
+        class="agsci.subsite.content.PhotoFolder.PhotoFolder"
+        interface=".interfaces.IDefaultExcludeFromNav"
+    /> 
+
+    <!-- Event Map Link -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.EventExtender"
+        factory=".extender.EventExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    />
+
+    <adapter
+        name="agsci.UniversalExtender.extender.EventExtender.fiddle"
+        factory=".extender.EventExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+    />
+
+    <!-- News Item News Link -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.NewsItemExtender"
+        factory=".extender.NewsItemExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    />
+
+    <adapter
+        name="agsci.UniversalExtender.extender.NewsItemExtender.fiddle"
+        factory=".extender.NewsItemExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+    />
+
+    <!-- Tags extender -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.TagExtender"
+        factory=".extender.TagExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    />
+
+    <five:implements
+        class="Products.ATContentTypes.content.newsitem.ATNewsItem"
+        interface=".interfaces.ITagExtender"
+    />
+    
+    <five:implements
+        class="Products.ATContentTypes.content.document.ATDocument"
+        interface=".interfaces.ITagExtender"
+    /> 
+
+    <!-- Folder Extender -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.FolderExtender"
+        factory=".extender.FolderExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    />
+
+    <adapter
+        name="agsci.UniversalExtender.extender.FolderExtender.fiddle"
+        factory=".extender.FolderExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+    />
+
+    <five:implements
+        class="Products.ATContentTypes.content.folder.ATFolder"
+        interface=".interfaces.IFolderExtender"
+    /> 
+
+    
+    <!-- Folder and Topic Display Options -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.FolderTopicExtender"
+        factory=".extender.FolderTopicExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    />
+
+    <five:implements
+        class="Products.ATContentTypes.content.folder.ATFolder"
+        interface=".interfaces.IFolderTopicExtender"
+    /> 
+    
+    <five:implements
+        class="Products.ATContentTypes.content.topic.ATTopic"
+        interface=".interfaces.IFolderTopicExtender"
+    /> 
+
+    <!-- Topic (Collection) Extender -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.TopicExtender"
+        factory=".extender.TopicExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    />
+
+    <adapter
+        name="agsci.UniversalExtender.extender.TopicExtender.fiddle"
+        factory=".extender.TopicExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+    />
+    
+    <five:implements
+        class="Products.ATContentTypes.content.topic.ATTopic"
+        interface=".interfaces.ITopicExtender"
+    /> 
+    
+    <!-- All Content Types Extender -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.AllContentTypesExtender"
+        factory=".extender.AllContentTypesExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    />
+
+    <adapter
+        name="agsci.UniversalExtender.extender.AllContentTypesExtender.fiddle"
+        factory=".extender.AllContentTypesExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+    />
+
+    <!-- Table of Contents Extender -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.TableOfContentsExtender"
+        factory=".extender.TableOfContentsExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    />
+
+    <five:implements
+        class="Products.ATContentTypes.content.event.ATEvent"
+        interface=".interfaces.ITableOfContentsExtender"    /> 
+    
+    <five:implements
+        class="Products.ATContentTypes.content.newsitem.ATNewsItem"
+        interface=".interfaces.ITableOfContentsExtender"
+    /> 
+
+    <five:implements
+        class="Products.ATContentTypes.content.folder.ATFolder"
+        interface=".interfaces.ITableOfContentsExtender"
+    /> 
+
+    <!-- Full Width Table of Contents Extender -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.FullWidthTableOfContentsExtender"
+        factory=".extender.FullWidthTableOfContentsExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    />
+
+    <adapter
+        name="agsci.UniversalExtender.extender.FullWidthTableOfContentsExtender.fiddle"
+        factory=".extender.FullWidthTableOfContentsExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+    />
+
+    <five:implements
+        class="Products.ATContentTypes.content.document.ATDocument"
+        interface=".interfaces.IFullWidthTableOfContentsExtender"
+    /> 
+
+    <!-- Contributors Extender -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.ContributorsExtender.fiddle"
+        factory=".extender.ContributorsExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+    />
+
+
+    <!-- Recursive Comments Extender -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.CommentsExtender"
+        factory=".extender.CommentsExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    />
+
+    <adapter
+        name="agsci.UniversalExtender.extender.CommentsExtender.fiddle"
+        factory=".extender.CommentsExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+    />
+
+
+    <!-- TagRoot extender/modifier -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.TagRootExtender"
+        factory=".extender.TagRootExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    />
+
+    <adapter
+        name="agsci.UniversalExtender.extender.TagRootExtender.fiddle"
+        factory=".extender.TagRootExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaModifier"
+    /> 
+
+    <five:implements
+        class="agsci.subsite.content.Blog.Blog"
+        interface="agsci.subsite.content.interfaces.ITagRoot"
+    /> 
+
+    <!-- Publication Extenders -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.FilePublicationExtender"
+        factory=".extender.FilePublicationExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    /> 
+
+    <adapter
+        name="agsci.UniversalExtender.extender.ContentPublicationExtender"
+        factory=".extender.ContentPublicationExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    /> 
+
+    <!-- Monkey Patch PloneFormGen htmlValue - str to safe_unicode encode -->
+
+    <monkey:patch
+        description="Use unicode encode instead of str in htmlValue"
+        class="Products.PloneFormGen.content.fieldsBase.BaseFormField"
+        replacement=".patch.htmlValue"
+        original="htmlValue"
+        />
+
+    <!-- Monkey Patch PloneFormGen getSavedFormInputForEdit - safe_unicode encode -->
+
+    <monkey:patch
+        description="Use safe_unicode in getSavedFormInputForEdit"
+        class="Products.PloneFormGen.content.saveDataAdapter.FormSaveDataAdapter"
+        replacement=".patch.getSavedFormInputForEdit"
+        original="getSavedFormInputForEdit"
+        />
+
+    <!-- Monkey Patch folder by adding 'getText' method -->
+
+    <monkey:patch
+        description="This adds a 'getText' method to the folder type"
+        class="Products.ATContentTypes.content.folder.ATFolder"
+        replacement=".patch.folderGetText"
+        original="getText"
+        ignoreOriginal="True"
+        />
+
+    <!-- Monkey Patch toLocalizedTime by removing leading 0's -->
+
+    <monkey:patch
+        description="This removes leading zeros (e.g. 06:00) from dates and times and handles date ranges."
+        class="Products.CMFPlone.browser.ploneview.Plone"
+        replacement=".patch.toLocalizedTime"
+        original="toLocalizedTime"
+        />
+        
+    <!-- Monkey Patch collection portlet to return parent URL if collection is default page -->
+
+    <monkey:patch
+        description="This makes the collection portlet return the parent URL if collection is default page"
+        class="plone.portlet.collection.collection.Renderer"
+        replacement=".patch.collection_url"
+        original="collection_url"
+        />
+
+    <!-- Monkey Patch collection portlet to not list empty collections -->
+
+    <monkey:patch
+        description="This provides portlet ordering for collection portlets"
+        class="plone.portlet.collection.collection.Renderer"
+        replacement=".patch._standard_results"
+        original="_standard_results"
+        />
+
+    <!-- Monkey Patch UberSelectionWidget to not truncate results -->
+
+    <monkey:patch
+        description="This (effectively) removes the truncation by setting the limit to 99999"
+        class="plone.app.form.widgets.uberselectionwidget.UberSelectionWidget"
+        replacement=".patch.uber_limit_results"
+        original="limit_results"
+        />
+
+    <!-- Monkey Patch FSD directory list to not show hidden people -->
+
+    <monkey:patch
+        description="This only shows people in the 'active' workflow state in the directory view."
+        class="Products.FacultyStaffDirectory.FacultyStaffDirectory.FacultyStaffDirectory"
+        replacement=".patch.getPeople"
+        original="getPeople"
+        />
+
+    <!-- Monkey Patch other content types to add 'getTableContents' method -->
+
+    <monkey:patch
+        description="This adds a 'getTableContents' method to the news item type"
+        class="Products.ATContentTypes.content.newsitem.ATNewsItem"
+        replacement=".patch.customTableContents"
+        original="getTableContents"
+        ignoreOriginal="True"
+        />
+
+    <monkey:patch
+        description="This adds a 'getTableContents' method to the event type"
+        class="Products.ATContentTypes.content.event.ATEvent"
+        replacement=".patch.customTableContents"
+        original="getTableContents"
+        ignoreOriginal="True"
+        />        
+
+    <monkey:patch
+        description="This adds a 'getTableContents' method to the folder type"
+        class="Products.ATContentTypes.content.folder.ATFolder"
+        replacement=".patch.customTableContents"
+        original="getTableContents"
+        ignoreOriginal="True"
+        />
+
+    <!-- Monkey patch navigation portlet to get manager -->
+    
+    <monkey:patch
+        description="This adds a 'isLeftColumn' method to the navigation renderer"
+        class="plone.app.portlets.portlets.navigation.Renderer"
+        replacement=".patch.navigation_portlet_left_column"
+        original="isLeftColumn"
+        ignoreOriginal="True"
+        />
+
+    <!-- Monkey patch navigation portlet to add isSubsite method-->
+    
+    <monkey:patch
+        description="This adds a 'isSubsite' method to the navigation renderer"
+        class="plone.app.portlets.portlets.navigation.Renderer"
+        replacement=".patch.navigation_subsite"
+        original="isSubsite"
+        ignoreOriginal="True"
+        />
+
+    <!-- Monkey patch comments enabled to change folder comments logic. -->
+
+    <monkey:patch
+        description="This changes how plone.app.discussion determines if comments should be enabled"
+        class="plone.app.discussion.browser.conversation.ConversationView"
+        replacement=".patch.commentsEnabled"
+        original="enabled"
+        ignoreOriginal="True"
+        />
+
+    <!-- Add 'getAvailableTags' to News Item. -->
+
+    <monkey:patch
+        description="This adds a 'getAvailableTags' to News Items, which pulls the available tags from the parent TagRoot object"
+        class="Products.ATContentTypes.content.newsitem.ATNewsItem"
+        replacement=".patch.getAvailableTags"
+        original="getAvailableTags"
+        ignoreOriginal="True"
+        />
+
+    <!-- Add 'getAvailableTags' to Document. -->
+
+    <monkey:patch
+        description="This adds a 'getAvailableTags' to Documents, which pulls the available tags from the parent TagRoot object"
+        class="Products.ATContentTypes.content.document.ATDocument"
+        replacement=".patch.getAvailableTags"
+        original="getAvailableTags"
+        ignoreOriginal="True"
+        />
+
+    <!-- Add 'short_location' method to Events -->
+    
+    <monkey:patch
+        description="Add 'short_location' method to Events"
+        class="Products.ATContentTypes.content.event.ATEvent"
+        replacement=".patch.eventShortLocation"
+        original="short_location"
+        ignoreOriginal="True"
+        />
+        
+    <!-- Add 'short_breadcrumb' override -->
+    
+    <monkey:patch
+        description="Add 'short_breadcrumb' override"
+        class="Products.CMFPlone.browser.navigation.PhysicalNavigationBreadcrumbs"
+        replacement=".patch.breadcrumbs"
+        original="breadcrumbs"
+        />
+
+    <!-- Add 'zip_code' to FSDPerson -->
+    
+    <monkey:patch
+        description="Add 'zip_code' method to FSDPerson"
+        class="Products.FacultyStaffDirectory.Person.Person"
+        replacement=".patch.fsdpersonzipcode"
+        original="zip_code"
+        ignoreOriginal="True"
+        />
+
+    <!-- Update queryCatalog related items sorting-->
+    
+    <monkey:patch
+        description="Update queryCatalog related items sorting"
+        class="Products.ATContentTypes.content.topic.ATTopic"
+        replacement=".patch.queryCatalog"
+        original="queryCatalog"
+        />
+
+    <!-- Fix get_size str call in LinesField -->
+    
+    <monkey:patch
+        description="Fix get_size str call in LinesField"
+        class="Products.Archetypes.Field.LinesField"
+        replacement=".patch.lines_field_get_size"
+        original="get_size"
+        />
+
+
+    <!-- Make HomePage/Section/Subsite/Blog types not allow comments on themselves, period. -->
+
+    <five:implements
+        class="agsci.subsite.content.HomePage.HomePage"
+        interface=".interfaces.INoComments"
+    /> 
+
+    <five:implements
+        class="agsci.subsite.content.Section.Section"
+        interface=".interfaces.INoComments"
+    /> 
+
+    <five:implements
+        class="agsci.subsite.content.Subsite.Subsite"
+        interface=".interfaces.INoComments"
+    /> 
+
+    <five:implements
+        class="agsci.subsite.content.Blog.Blog"
+        interface=".interfaces.INoComments"
+    /> 
+
+    <!-- Fix from https://dev.plone.org/ticket/9177 -->
+
+    <class class="OFS.CopySupport.CopyContainer">
+        <require permission="cmf.AddPortalContent" attributes="manage_pasteObjects" />
+    </class>
+    <class class="Products.Archetypes.BaseBTreeFolder.BaseBTreeFolder">
+        <require permission="cmf.AddPortalContent" attributes="manage_pasteObjects" />
+    </class>
+    <class class="Products.Archetypes.BaseFolder.BaseFolder">
+        <require permission="cmf.AddPortalContent" attributes="manage_pasteObjects" />
+    </class>
+    <class class="Products.CMFPlone.PloneFolder.PloneFolder">
+        <require permission="cmf.AddPortalContent" attributes="manage_pasteObjects" />
+    </class>
+
+    <!-- Customize left navigation logic -->
+    <adapter 
+        for="*
+             .interfaces.ICustomNavigation"
+        factory=".adapters.CustomNavtreeStrategy"
+        provides="plone.app.layout.navigation.interfaces.INavtreeStrategy" />
+
+    <five:implements 
+        class="plone.app.portlets.portlets.navigation.Assignment"
+        interface=".interfaces.ICustomNavigation" />
+
+        
+</configure>
