@@ -441,6 +441,16 @@
         ignoreOriginal="True"
         />
 
+    <!-- Add 'getAvailableTags' to Events. -->
+
+    <monkey:patch
+        description="This adds a 'getAvailableTags' to Events, which pulls the available tags from the parent TagRoot object"
+        class="Products.ATContentTypes.content.event.ATEvent"
+        replacement=".patch.getAvailableTags"
+        original="getAvailableTags"
+        ignoreOriginal="True"
+        />
+
     <!-- Add 'short_location' method to Events -->
     
     <monkey:patch
