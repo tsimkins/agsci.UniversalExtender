@@ -7,7 +7,7 @@ from Products.ATContentTypes.interfaces.document import IATDocument
 from Products.ATContentTypes.interfaces.folder import IATFolder
 from archetypes.schemaextender.field import ExtensionField
 from archetypes.schemaextender.interfaces import ISchemaExtender, ISchemaModifier, IBrowserLayerAwareExtender
-from interfaces import IUniversalExtenderLayer, IFSDPersonExtender, IDefaultExcludeFromNav, IFolderTopicExtender, ITopicExtender, IFolderExtender, IMarkdownDescriptionExtender, ITableOfContentsExtender, ITagExtender, IUniversalPublicationExtender, IFilePublicationExtender, IFullWidthTableOfContentsExtender
+from interfaces import IUniversalExtenderLayer, IFSDPersonExtender, IDefaultExcludeFromNav, IFolderTopicExtender, ITopicExtender, IFolderExtender, IMarkdownDescriptionExtender, ITableOfContentsExtender, ITagExtender, IUniversalPublicationExtender, IFilePublicationExtender, IFullWidthTableOfContentsExtender, ITileFolder
 from zope.component import adapts, provideAdapter
 from zope.interface import implements
 from AccessControl import ClassSecurityInfo
@@ -34,6 +34,34 @@ class _TagsField(_ExtensionLinesField):
     def Vocabulary(self, context):
         tags = context.getAvailableTags()
         return DisplayList([(x,x) for x in tags])
+
+class TileFolderExtender(object):
+    adapts(ITileFolder)
+    implements(ISchemaExtender, IBrowserLayerAwareExtender)
+    layer = IUniversalExtenderLayer
+
+
+    fields = [
+        _ExtensionStringField(
+            "tile_folder_columns",
+            required=False,
+            default='standard',
+            schemata="settings",
+            widget=SelectionWidget(
+                label=u"Folder View Columns",
+                description=u"",
+                format='select',
+                condition="python:member.has_role('Manager', object)",
+            ),
+            vocabulary=([(str(x).lower(), str(x)) for x in range(1,6)]),
+        ),
+    ]
+
+    def __init__(self, context):
+        self.context = context
+
+    def getFields(self):
+        return self.fields
 
 
 class HomePageExtender(object):

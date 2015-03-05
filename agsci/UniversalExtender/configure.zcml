@@ -27,6 +27,14 @@
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       />
 
+    <!-- Additional field for Tile Folder View -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.TileFolderExtender"
+        factory=".extender.TileFolderExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    /> 
+
     <!-- Additional fields for HomePage -->
 
     <adapter
