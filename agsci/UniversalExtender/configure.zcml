@@ -121,7 +121,12 @@
         class="Products.ATContentTypes.content.newsitem.ATNewsItem"
         interface=".interfaces.ITagExtender"
     />
-    
+
+    <five:implements
+        class="Products.ATContentTypes.content.folder.ATFolder"
+        interface=".interfaces.ITagExtender"
+    />    
+
     <five:implements
         class="Products.ATContentTypes.content.document.ATDocument"
         interface=".interfaces.ITagExtender"
