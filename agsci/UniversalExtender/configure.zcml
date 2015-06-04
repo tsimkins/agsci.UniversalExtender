@@ -445,6 +445,16 @@
         ignoreOriginal="True"
         />
 
+    <!-- Add 'getAvailableTags' to Folder. -->
+
+    <monkey:patch
+        description="This adds a 'getAvailableTags' to Folders, which pulls the available tags from the parent TagRoot object"
+        class="Products.ATContentTypes.content.folder.ATFolder"
+        replacement=".patch.getAvailableTags"
+        original="getAvailableTags"
+        ignoreOriginal="True"
+        />
+
     <!-- Add 'getAvailableTags' to Document. -->
 
     <monkey:patch

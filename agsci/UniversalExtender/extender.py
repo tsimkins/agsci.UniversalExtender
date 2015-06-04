@@ -32,7 +32,11 @@ class _ExtensionIntegerField(ExtensionField, IntegerField): pass
 
 class _TagsField(_ExtensionLinesField):
     def Vocabulary(self, context):
-        tags = context.getAvailableTags()
+        try:
+            tags = context.getAvailableTags()
+        except AttributeError:
+            tags = []
+
         return DisplayList([(x,x) for x in tags])
 
 class TileFolderExtender(object):
