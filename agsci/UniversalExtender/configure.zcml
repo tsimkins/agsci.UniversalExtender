@@ -324,6 +324,16 @@
         original="getSavedFormInputForEdit"
         />
 
+    <!-- Monkey Patch News Item by adding 'getRemoteUrl' method -->
+
+    <monkey:patch
+        description="This adds a 'getRemoteUrl' method to the News Item type"
+        class="Products.ATContentTypes.content.newsitem.ATNewsItem"
+        replacement=".patch.newsItemGetRemoteUrl"
+        original="getRemoteUrl"
+        ignoreOriginal="True"
+        />
+
     <!-- Monkey Patch folder by adding 'getText' method -->
 
     <monkey:patch

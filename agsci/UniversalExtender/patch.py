@@ -35,7 +35,19 @@ def folderGetText(self):
     self = aq_base(self)
 
     try:
-        return self.folder_text
+        return getattr(self, 'folder_text', '')
+    except:
+        return ''
+
+def newsItemGetRemoteUrl(self):
+    """Products.ATContentTypes.content.newsitem.ATNewsItem"""
+
+    # Acquisition.aq_base strips the acquisition layer from an object.
+    # See: https://weblion.psu.edu/trac/weblion/wiki/OverridingPloneAcquisition
+    self = aq_base(self)
+
+    try:
+        return getattr(self, 'article_link', '')
     except:
         return ''
 
