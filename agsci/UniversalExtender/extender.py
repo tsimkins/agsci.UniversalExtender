@@ -88,19 +88,6 @@ class HomePageExtender(object):
             schemata="settings",
         ),
         _ExtensionStringField(
-            "homepage_image_format",
-            required=False,
-            default='standard',
-            schemata="settings",
-            widget=SelectionWidget(
-                label=u"Homepage Image Format",
-                description=u"",
-                format='select',
-                condition="python:member.has_role('Manager', object)",
-            ),
-            vocabulary=([(str(x).lower(), str(x)) for x in ('Standard', 'Panorama')]),
-        ),
-        _ExtensionStringField(
             "homepage_portlet_format",
             required=False,
             default='standard',

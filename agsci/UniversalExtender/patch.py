@@ -573,3 +573,22 @@ def lines_field_get_size(self, instance):
     return size
 
 
+# Handle the special case where the section title (displayed below the
+# breadcrumbs) is the same as the nav portlet title.  This presents the nav 
+# portlet title as a hidden structure, so it doesn't duplicate.
+
+def navigation_portlet_include_top(self):
+
+    v = self.context.restrictedTraverse('@@agcommon_utilities')
+
+    section = v.getSection()
+    
+    if section:
+
+        section_url = section.absolute_url()
+        nav_root_url = self.getNavRoot().absolute_url()
+
+        if section_url == nav_root_url:
+            return False
+    
+    return getattr(self.data, 'includeTop', self.properties.includeTop)

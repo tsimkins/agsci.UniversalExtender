@@ -590,5 +590,13 @@
         class="plone.app.portlets.portlets.navigation.Assignment"
         interface=".interfaces.ICustomNavigation" />
 
+    <!-- Monkey Patch navigation portlet to not show header if we're in the left nav on the homepage -->
+
+    <monkey:patch
+        description="Navigation portlet should not show header if we're in the left nav on the homepage"
+        class="plone.app.portlets.portlets.navigation.Renderer"
+        replacement=".patch.navigation_portlet_include_top"
+        original="include_top"
+        />
         
 </configure>
