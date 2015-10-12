@@ -570,6 +570,18 @@ class FolderTopicExtender(object):
                 condition="python:member.has_role('Manager', object)",
             ),
         ),
+        
+        _ExtensionBooleanField(
+            "show_person_areas",
+            required=False,
+            default=True,
+            schemata="settings",
+            widget=BooleanWidget(
+                label=u"Show \"Areas of Expertise\" for people in results.",
+                description=u"",
+                condition="python:member.has_role('Manager', object)"
+            ),
+        ),
 
     ]
 
