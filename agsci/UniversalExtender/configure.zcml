@@ -28,6 +28,22 @@
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       />
 
+    <!-- Video Page Extender -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.VideoPageExtender"
+        factory=".extender.video.VideoPageExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    /> 
+    
+    <!-- Video Playlist Extender -->
+
+    <adapter
+        name="agsci.UniversalExtender.extender.VideoPlaylistExtender"
+        factory=".extender.video.VideoPlaylistExtender"
+        provides="archetypes.schemaextender.interfaces.ISchemaExtender"
+    /> 
+
     <!-- Additional field for Tile Folder View -->
 
     <adapter

@@ -7,7 +7,7 @@ from Products.ATContentTypes.interfaces.document import IATDocument
 from Products.ATContentTypes.interfaces.folder import IATFolder
 from archetypes.schemaextender.field import ExtensionField
 from archetypes.schemaextender.interfaces import ISchemaExtender, ISchemaModifier, IBrowserLayerAwareExtender
-from interfaces import IUniversalExtenderLayer, IFSDPersonExtender, IDefaultExcludeFromNav, IFolderTopicExtender, ITopicExtender, IFolderExtender, IMarkdownDescriptionExtender, ITableOfContentsExtender, ITagExtender, IUniversalPublicationExtender, IFilePublicationExtender, IFullWidthTableOfContentsExtender, ITileFolder
+from ..interfaces import IUniversalExtenderLayer, IFSDPersonExtender, IDefaultExcludeFromNav, IFolderTopicExtender, ITopicExtender, IFolderExtender, IMarkdownDescriptionExtender, ITableOfContentsExtender, ITagExtender, IUniversalPublicationExtender, IFilePublicationExtender, IFullWidthTableOfContentsExtender, ITileFolder
 from zope.component import adapts, provideAdapter
 from zope.interface import implements
 from AccessControl import ClassSecurityInfo
@@ -39,11 +39,21 @@ class _TagsField(_ExtensionLinesField):
 
         return DisplayList([(x,x) for x in tags])
 
-class TileFolderExtender(object):
+# Clean up repeated code for getFields and __init__ methods
+class BaseExtender(object):
+    layer = IUniversalExtenderLayer
+    
+    fields = []
+    
+    def __init__(self, context):
+        self.context = context
+
+    def getFields(self):
+        return self.fields
+
+class TileFolderExtender(BaseExtender):
     adapts(ITileFolder)
     implements(ISchemaExtender, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
-
 
     fields = [
         _ExtensionStringField(
@@ -61,17 +71,11 @@ class TileFolderExtender(object):
         ),
     ]
 
-    def __init__(self, context):
-        self.context = context
 
-    def getFields(self):
-        return self.fields
-
-
-class HomePageExtender(object):
+class HomePageExtender(BaseExtender):
     adapts(IHomePage)
     implements(ISchemaExtender, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
 
     fields = [
@@ -126,11 +130,6 @@ class HomePageExtender(object):
         ),
     ]
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
 
 # Add fax, twitter, facebook, linkedin to FSDPerson.
 #
@@ -139,10 +138,10 @@ class HomePageExtender(object):
 # when they were 20 pounds lighter and had hair. Professional
 # portaits only!
 
-class FSDPersonExtender(object):
+class FSDPersonExtender(BaseExtender):
     adapts(IPerson)
     implements(ISchemaExtender, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
 
     fields = [
@@ -242,11 +241,6 @@ class FSDPersonExtender(object):
 
         return schema
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
 
 # Check the "Exclude from navigation" by default for Links
 # and Files.  99% of the time these should be hidden, but
@@ -256,13 +250,10 @@ class FSDPersonExtender(object):
 # the base class, and put in a check to see if it's a
 # specific type.
 
-class DefaultExcludeFromNav(object):
+class DefaultExcludeFromNav(BaseExtender):
     adapts(IDefaultExcludeFromNav)
     implements(ISchemaModifier, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
 
-    def __init__(self, context):
-        self.context = context
 
     def fiddle(self, schema):
         # Set the default for "Exclude from nav" to true
@@ -275,10 +266,10 @@ class DefaultExcludeFromNav(object):
 
 # Add a field for a Google Map link to the Event type
 
-class EventExtender(object):
+class EventExtender(BaseExtender):
     adapts(IATEvent)
     implements(ISchemaExtender, ISchemaModifier, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
 
     fields = [
@@ -411,18 +402,13 @@ class EventExtender(object):
 
         return schema
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
 
 # Add a field for an Article Link to the News Item type
 
-class NewsItemExtender(object):
+class NewsItemExtender(BaseExtender):
     adapts(IATNewsItem)
     implements(ISchemaExtender, ISchemaModifier, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
 
     fields = [
@@ -474,18 +460,13 @@ class NewsItemExtender(object):
 
         return schema
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
 
 # Adds a "two column" field to folders. This will set a class, and jQuery will dynamically create two near-equal columns.
 
-class FolderTopicExtender(object):
+class FolderTopicExtender(BaseExtender):
     adapts(IFolderTopicExtender)
     implements(ISchemaExtender, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
     fields = [
 
@@ -585,20 +566,15 @@ class FolderTopicExtender(object):
 
     ]
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
 
 """
     Replaces the FolderText product.
 """
 
-class FolderExtender(object):
+class FolderExtender(BaseExtender):
     adapts(IFolderExtender)
     implements(ISchemaExtender, ISchemaModifier, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
     fields = [
         _ExtensionTextField('folder_text',
@@ -640,12 +616,6 @@ class FolderExtender(object):
 
     ]
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
-
     def fiddle(self, schema):
 
         # http://blog.keul.it/2011/09/plone-and-related-items-use-for.html
@@ -657,10 +627,10 @@ class FolderExtender(object):
         schema['relatedItems'] = tmp_field
 
 
-class TopicExtender(object):
+class TopicExtender(BaseExtender):
     adapts(ITopicExtender)
     implements(ISchemaExtender, ISchemaModifier, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
     fields = [
         _ExtensionLinesField(
@@ -684,13 +654,6 @@ class TopicExtender(object):
         ),
     ]
 
-
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
-
     def fiddle(self, schema):
 
         # Hide the 'Display as Table' and 'Table Columns' fields
@@ -705,10 +668,10 @@ class TopicExtender(object):
 
 # Adds a Markdown bool to render descriptions as Markdown
 
-class MarkdownDescriptionExtender(object):
+class MarkdownDescriptionExtender(BaseExtender):
     adapts(IMarkdownDescriptionExtender)
     implements(ISchemaExtender, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
     fields = [
 
@@ -726,16 +689,10 @@ class MarkdownDescriptionExtender(object):
     ]
 
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
-
-class TableOfContentsExtender(object):
+class TableOfContentsExtender(BaseExtender):
     adapts(ITableOfContentsExtender)
     implements(ISchemaExtender, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
     fields = [
 
@@ -752,17 +709,11 @@ class TableOfContentsExtender(object):
     ]
 
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
-
 # Full Width Table Of Contents
-class FullWidthTableOfContentsExtender(object):
+class FullWidthTableOfContentsExtender(BaseExtender):
     adapts(IFullWidthTableOfContentsExtender)
     implements(ISchemaExtender, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
     fields = [
         _ExtensionBooleanField(
@@ -777,13 +728,6 @@ class FullWidthTableOfContentsExtender(object):
         ),
     ]
 
-
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
-
     def fiddle(self, schema):
         schema.moveField('toc_full_width', after='tableContents')
         return schema
@@ -791,13 +735,10 @@ class FullWidthTableOfContentsExtender(object):
 # Change the "Contributors" field to "Contact Information"
 # and add instructions
 
-class ContributorsExtender(object):
+class ContributorsExtender(BaseExtender):
     adapts(IContributors)
     implements(ISchemaModifier, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
 
-    def __init__(self, context):
-        self.context = context
 
     def fiddle(self, schema):
         new_field = schema['contributors'].copy()
@@ -809,10 +750,10 @@ class ContributorsExtender(object):
 
 # Add an "Allow comments on folder contents" checkbox to folders
 
-class CommentsExtender(object):
+class CommentsExtender(BaseExtender):
     adapts(IATFolder)
     implements(ISchemaExtender, ISchemaModifier, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
     fields = [
 
@@ -834,18 +775,11 @@ class CommentsExtender(object):
         schema.moveField('allow_discussion_contents', after='allowDiscussion')
 
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
-
 # Adds the Public Tags field
-
-class TagExtender(object):
+class TagExtender(BaseExtender):
     adapts(ITagExtender)
     implements(ISchemaExtender, ISchemaModifier, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
 
     fields = [
@@ -863,18 +797,12 @@ class TagExtender(object):
 
     ]
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
 
 # Tag Root (contains a list of tags)
-
-class TagRootExtender(object):
+class TagRootExtender(BaseExtender):
     adapts(ITagRoot)
     implements(ISchemaExtender, ISchemaModifier, IBrowserLayerAwareExtender)
-    layer = IUniversalExtenderLayer
+
 
     fields = [
 
@@ -895,13 +823,7 @@ class TagRootExtender(object):
 
         return schema
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
-
-class BasePublicationExtender(object):
+class BasePublicationExtender(BaseExtender):
 
     @property
     def fields(self):
@@ -918,19 +840,13 @@ class BasePublicationExtender(object):
             ),
         ]
 
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
 
 # For content (pages, folders, etc.)
-
 class ContentPublicationExtender(BasePublicationExtender):
     adapts(IUniversalPublicationExtender)
     implements(ISchemaExtender, IBrowserLayerAwareExtender)
 
-    layer = IUniversalExtenderLayer
+
     
     @property
     def fields(self):
@@ -970,14 +886,14 @@ class FilePublicationExtender(BasePublicationExtender):
     adapts(IFilePublicationExtender)
     implements(ISchemaExtender, IBrowserLayerAwareExtender)
 
-    layer = IUniversalExtenderLayer
 
 
-class AllContentTypesExtender(object):
+
+class AllContentTypesExtender(BaseExtender):
     adapts(IATContentType)
     implements(ISchemaExtender, ISchemaModifier, IBrowserLayerAwareExtender)
 
-    layer = IUniversalExtenderLayer
+
 
     fields = [
         _ExtensionBooleanField(
@@ -1004,12 +920,6 @@ class AllContentTypesExtender(object):
         ),
 
     ]
-
-    def __init__(self, context):
-        self.context = context
-
-    def getFields(self):
-        return self.fields
 
     def fiddle(self, schema):
         schema.moveField('show_related_items', after='relatedItems')

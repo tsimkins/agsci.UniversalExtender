@@ -54,4 +54,10 @@ class IFilePublicationExtender(Interface):
     """
 
 class ITileFolder(Interface):
-    """ marker interface """
+    """ marker interface for tile folder """
+
+class IVideoPage(Interface):
+    """ marker interface for embedding a single video """
+
+class IVideoPlaylist(Interface):
+    """ marker interface for embedding a video playlist """
