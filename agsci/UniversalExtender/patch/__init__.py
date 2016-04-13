@@ -7,7 +7,7 @@ from Products.CMFPlone.interfaces import IPloneSiteRoot, INonStructuralFolder
 from Acquisition import aq_base, aq_inner, aq_parent
 from plone.registry.interfaces import IRegistry
 from plone.app.discussion.interfaces import IDiscussionSettings
-from interfaces import INoComments
+from ..interfaces import INoComments
 from DateTime import DateTime
 from plone.app.blob.interfaces import IBlobField
 from Products.Archetypes.interfaces import IFileField, IImageField, ITextField

@@ -614,5 +614,13 @@
         replacement=".patch.navigation_portlet_include_top"
         original="include_top"
         />
-        
+
+    <!-- Monkey patch ics generator to add URL to Location -->
+
+    <monkey:patch
+        description="Monkey patch ics generator to add URL to Location"
+        class="Products.ATContentTypes.lib.calendarsupport.CalendarSupportMixin"
+        replacement=".patch.calendar.getICal"
+        original="getICal"
+        />        
 </configure>
