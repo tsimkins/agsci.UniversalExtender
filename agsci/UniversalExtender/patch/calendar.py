@@ -25,6 +25,8 @@ def getICal(self):
 
     location = self.getLocation()
     if location:
+        # PATCH: Grab the map_link field, and if it exists, append it to the
+        # location.
         map_link = getattr(self, 'map_link', None)
 
         if map_link:
@@ -54,6 +56,15 @@ def getICal(self):
         out.write('CONTACT:%s\n' % vformat(', '.join(cn)))
 
     url = self.event_url()
+    
+    # PATCH: If there's no event URL, try to grab the map_link field.
+    # Fall back to the URL of the event object.
+    if not url:
+        url = getattr(self, 'map_link', None)
+
+    if not url:
+        url = self.absolute_url()
+
     if url:
         out.write('URL:%s\n' % url)
 
