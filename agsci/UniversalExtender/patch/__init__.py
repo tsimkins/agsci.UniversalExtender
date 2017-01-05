@@ -72,16 +72,28 @@ def toLocalizedTime(self, time, long_format=None, time_only=None, end_time=None)
     util = getToolByName(context, 'translation_service')
 
     def friendly(d):
-    
+
         if not d:
             return ''
 
         if d.startswith('0'):
             d = d.replace('0', '', 1)
-        
+
         d = d.replace('12:00 AM', '').strip()
-        
+
         return d.replace(' 0', ' ')
+
+    # Converts a timestamp to a DateTime object.
+    # If it's a GMT time, convert that to US/Eastern
+    def toDateTime(t):
+
+        if not isinstance(t, DateTime):
+            t = DateTime(t)
+
+        if t.timezone() == 'GMT+0':
+            t = t.toZone('US/Eastern')
+
+        return t
 
     if not time:
         return ''
@@ -101,25 +113,18 @@ def toLocalizedTime(self, time, long_format=None, time_only=None, end_time=None)
         except ValueError:
             return ''
 
-        if not isinstance(time, DateTime):
-            start = DateTime(time)
-        else:
-            start = time
-
-        if not isinstance(end_time, DateTime):
-            end = DateTime(end_time)
-        else:
-            end = end_time
+        start = toDateTime(time)
+        end = toDateTime(end_time)
 
         start_date_fmt = start.strftime('%Y-%m-%d')
-        end_date_fmt = end.strftime('%Y-%m-%d')       
+        end_date_fmt = end.strftime('%Y-%m-%d')
 
         start_time_fmt = start.strftime('%H:%M')
-        end_time_fmt = end.strftime('%H:%M') 
-         
+        end_time_fmt = end.strftime('%H:%M')
+
         # If the same date
         if start_date_fmt == end_date_fmt:
-            
+
             # If we want the long format, return [date] [time] - [time]
             if long_format:
                 if start_time_fmt == end_time_fmt:
@@ -140,9 +145,9 @@ def toLocalizedTime(self, time, long_format=None, time_only=None, end_time=None)
                 elif start_full_fmt:
                     return start_full_fmt
                 elif end_full_fmt:
-                    return end_full_fmt 
+                    return end_full_fmt
                 else:
-                    return ''                  
+                    return ''
             # Return the start date in short format
             else:
                 return start_full_fmt
@@ -159,7 +164,7 @@ def toLocalizedTime(self, time, long_format=None, time_only=None, end_time=None)
                 elif start_full_fmt:
                     return start_full_fmt
                 elif end_full_fmt:
-                    return end_full_fmt 
+                    return end_full_fmt
                 else:
                     return ''
             elif start.year() == end.year():
@@ -175,7 +180,7 @@ def toLocalizedTime(self, time, long_format=None, time_only=None, end_time=None)
             return friendly(start_full_fmt)
         else:
             return ''
-    
+
 def collection_url(self):
     collection = self.collection()
     limit = self.data.limit
@@ -184,7 +189,7 @@ def collection_url(self):
     if collection is None:
         return None
     elif limit and limit > 0 and self.portal_state.anonymous() and len(collection.queryCatalog()) <= limit:
-        # Don't show a URL if there is a limit, the user is anonymous 
+        # Don't show a URL if there is a limit, the user is anonymous
         # (so people managing through the "More..." link can still use it)
         # and number of items are under a limit
         return None
@@ -206,17 +211,17 @@ def _standard_results(self):
             results = results._sequence
         else:
             results = collection.queryCatalog()
-        
+
         if hasattr(collection, "order_by_id") and collection.order_by_id:
             agcommon_utilities = self.context.restrictedTraverse('@@agcommon_utilities')
             results = agcommon_utilities.reorderTopicContents(results, collection.order_by_id)
-        
+
         if limit and limit > 0:
             results = results[:limit]
 
     return results
 
-# The "UberSelectionWidget" used by the collection portlet (and soon to be used 
+# The "UberSelectionWidget" used by the collection portlet (and soon to be used
 # by the FeedMixer portlet) annoyingly has a hardcoded limit of 20 results.  This
 # sets that limit to 99999.  The reason?  We have 100+ Extension subsites, all
 # with a a standard layout, and a collection of 'upcoming'.
@@ -263,7 +268,7 @@ def navigation_portlet_left_column(self):
 
 def navigation_subsite(self):
     return getContextConfig(self.context, 'enable_subsite_nav')
-        
+
 
 # Change logic for comments being enabled
 
@@ -284,7 +289,7 @@ def commentsEnabled(self):
     parent = aq_inner(self.__parent__)
 
     # Always return False if object provides the INoComments interface.
-    # This would be for Subsites, Sections, 
+    # This would be for Subsites, Sections,
     # Blogs and HomePages
     if (INoComments.providedBy(parent)):
         return False
@@ -316,7 +321,7 @@ def commentsEnabled(self):
     if getattr(aq_base(obj), 'allow_discussion', False):
         return True
 
-    # Check if traversal found a folder with allow_discussion_contents 
+    # Check if traversal found a folder with allow_discussion_contents
     # set to True in the acquisition chain.
     if not IFolderish.providedBy(obj) and traverse_parents(obj):
         return True
@@ -334,7 +339,7 @@ def getAvailableTags(self):
                 tags = getattr(i, 'available_public_tags')
             break
     return tags
-    
+
 def icon(self, portal_type):
     type = self.ttool.getTypeInfo(portal_type)
 
@@ -373,7 +378,7 @@ def eventShortLocation(self):
                 return None
 
             zipinfo = ezt.getZIPInfo(zip)
-            
+
             if zipinfo:
                 return zipinfo[1]
 
@@ -392,7 +397,7 @@ def breadcrumbs(self):
         except TypeError:
             pass
 
-        return utils.pretty_title_or_id(context, context)        
+        return utils.pretty_title_or_id(context, context)
 
     context = aq_inner(self.context)
     request = self.request
@@ -446,10 +451,10 @@ def queryCatalog(self, REQUEST=None, batch=False, b_size=None,
     """
     if REQUEST is None:
         REQUEST = getattr(self, 'REQUEST', {})
-    b_start = REQUEST.get('b_start', 0)     
+    b_start = REQUEST.get('b_start', 0)
 
     pcatalog = getToolByName(self, 'portal_catalog')
-    
+
     mt = getToolByName(self, 'portal_membership')
 
     # Related items
@@ -509,7 +514,7 @@ def htmlValue(self, REQUEST):
 
     value = REQUEST.form.get(self.__name__, 'No Input')
     valueType = type(value)
-    
+
     # value may be a string or a unicode string;
     # it may be an array of string/unicode strings.
     # establish a UTF-8 baseline. UTF-8 not because it's right,
@@ -526,7 +531,7 @@ def htmlValue(self, REQUEST):
         value = a
 
     value = str(value)
-    
+
     if not value:
         return ''
 
@@ -551,7 +556,7 @@ def htmlValue(self, REQUEST):
 def getSavedFormInputForEdit(self, **kwargs):
     """ returns saved as CSV text """
     delimiter = self.csvDelimiter()
-    sbuf = StringIO()   
+    sbuf = StringIO()
     writer = csv.writer(sbuf, delimiter=delimiter)
     for row in self.getSavedFormInput():
         writer.writerow([safe_unicode(x).encode('utf-8') for x in row])
@@ -564,7 +569,7 @@ def getSavedFormInputForEdit(self, **kwargs):
 # Make unicode friendly
 # Products.Archetypes.Field.LinesField
 
-def lines_field_get_size(self, instance):   
+def lines_field_get_size(self, instance):
     """Get size of the stored data used for get_size in BaseObject
     """
     size=0
@@ -574,7 +579,7 @@ def lines_field_get_size(self, instance):
 
 
 # Handle the special case where the section title (displayed below the
-# breadcrumbs) is the same as the nav portlet title.  This presents the nav 
+# breadcrumbs) is the same as the nav portlet title.  This presents the nav
 # portlet title as a hidden structure, so it doesn't duplicate.
 
 def navigation_portlet_include_top(self):
@@ -582,7 +587,7 @@ def navigation_portlet_include_top(self):
     v = self.context.restrictedTraverse('@@agcommon_utilities')
 
     section = v.getSection()
-    
+
     if section:
 
         section_url = section.absolute_url()
@@ -590,5 +595,5 @@ def navigation_portlet_include_top(self):
 
         if section_url == nav_root_url:
             return False
-    
+
     return getattr(self.data, 'includeTop', self.properties.includeTop)
