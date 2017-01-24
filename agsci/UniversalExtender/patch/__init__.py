@@ -586,14 +586,15 @@ def navigation_portlet_include_top(self):
 
     v = self.context.restrictedTraverse('@@agcommon_utilities')
 
-    section = v.getSection()
+    if self.isLeftColumn():
 
-    if section:
+        section = v.getSection()
 
-        section_url = section.absolute_url()
-        nav_root_url = self.getNavRoot().absolute_url()
+        if section:
 
-        if section_url == nav_root_url:
-            return False
+            section_url = section.absolute_url()
+            nav_root_url = self.getNavRoot().absolute_url()
+
+            return section_url != nav_root_url
 
     return getattr(self.data, 'includeTop', self.properties.includeTop)
