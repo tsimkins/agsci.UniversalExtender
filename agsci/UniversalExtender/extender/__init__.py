@@ -299,7 +299,7 @@ class EventExtender(BaseExtender):
                 widget=StringWidget(
                     label=u"Email address for registration responses.",
                     description=u"Use this field if you would like to receive an email for each registration.",
-                    condition="python:member.has_role('Manager', object) or member.has_role('Event Organizer', object)",
+                    condition="python:False",
                 ),
         ),
         _ExtensionDateTimeField(
@@ -328,7 +328,7 @@ class EventExtender(BaseExtender):
             widget=RichWidget(
                 label=u"Email Confirmation Message",
                 description=u"Additional text sent as part of confirmation email.",
-                condition="python:member.has_role('Manager', object) or member.has_role('Event Organizer', object)",
+                condition="python:False",
             ),
             default_output_type="text/x-html-safe",
             validators=('isTidyHtmlWithCleanup',),
