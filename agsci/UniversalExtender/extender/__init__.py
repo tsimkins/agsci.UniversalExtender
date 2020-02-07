@@ -239,6 +239,11 @@ class FSDPersonExtender(BaseExtender):
             image_field.widget.condition="python:member.has_role('Manager', object) or member.has_role('Personnel Manager', object)"
             schema['image'] = image_field
 
+        # Hide the 'Personal Assistants' field
+        assistants_field = schema['assistants'].copy()
+        assistants_field.widget.visible={'edit':'invisible','view':'invisible'}
+        schema['assistants'] = assistants_field
+
         return schema
 
 
